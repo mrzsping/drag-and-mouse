@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>拖拽添加排序</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .mod{
+      float: left;
+      margin-left: 100px;
+    }
+    .box{
+      float: left;
+    }
+    .mod div{
+      width: 200px;
+      height: auto;
+      line-height: 32px;
+      background: #f00;
+    }
+    .mod .del{
+      display: none;
+    }
+    .items .del{
+      display: block;
+    }
+     .add{
+      display: none;
+    }
+    .items {
+      padding: 10px;
+      width: 225px;
+      height: auto;
+      min-height: 200px;
+      margin: 0;
+      position: relative;
+      background-color: #f6f9fa;
+      overflow: hidden;
+      border-radius: 4px;
+      border: 1px solid #f00;
+    }
+
+    .item {
+      overflow: hidden;
+      width: 100%;
+      height: auto;
+      margin-top: 10px;
+      line-height: 32px;
+      text-align: center;
+      transition: background-color .3s, color .3s, box-shadow .5s;
+      cursor: pointer;
+      user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      background: #00f;
+    }
+
+    .item:hover {
+      background-color: #00a1d6;
+      /* color: #fff; */
+    }
+
+    .select {
+      position: absolute;
+      background-color: #00a1d6;
+      color: #fff;
+      box-shadow: 0 4px 4px #ccc;
+      z-index: 999;
+    }
+
+    .hold {
+      cursor: inherit;
+      border: 1px dashed #ccc;
+      box-sizing: border-box;
+      width: 100%;
+      border: 1px dotted #f00;
+      float: left;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="items">
+      
+    </div>
+  </div>
+  <div class="mod">
+    <div draggable="true" class="item">2
+       11111111111111111111111111111111111111111111111111111
+    </div>
+    <div draggable="true" class="item">3
+        <span class="del">X</span>
+        <span class="add">+</span>
+    </div>
+    <div draggable="true" class="item">4
+        <span class="del">X</span>
+        <span class="add">+</span>
+    </div>
+    <div draggable="true" class="item">5
+        <span class="del">X</span>
+        <span class="add">+</span>
+    </div>
+  </div>
+  <script>
+    function init(c, itemClass, delClass, active,_$,__$){
+      //定义元素获取
+    
+    const holdItemDom = document.createElement('div');
+    const listDom = _$(c);
+    let dragObj;
+    holdItemDom.classList.add(itemClass, 'hold');
+    
+    //移动显示
+    //mousedown
+    listDom.onmousedown = (event) => {
+      console.log(1)
+      if(listDom.firstChild.nodeType == 3){
+        listDom.removeChild(listDom.firstChild);
+      }
+      let currenIndex;
+      const itemDomList = __$(c+' .'+itemClass);
+      const listLength = listDom.children.length;
+      const startY = event.clientY;
+      //const startX = event.clientX;
+      const delBtn = __$(delClass);
+      const currentItems = __$(c+' .'+itemClass);
+      let selectIndex;
+      //删除
+      Array.from(delBtn).forEach((v, i) => {
+        v.onclick = (e) => {
+          listDom.children[i].remove()
+        }
+      })
+
+      //获取index
+      if(event.target.className == itemClass){
+        dragObj = event.target; 
+      }else if(event.target.offsetParent.parentNode.className === itemClass){
+        dragObj = event.target.offsetParent.parentNode;
+      }else{
+        return
+      }
+      // dragObj.style.top = 0;
+      // dragObj.style.left = 0;
+      Array.from(itemDomList).forEach((v, i) => {
+        if (v === event.target || v === event.target.offsetParent.parentNode) {
+          selectIndex = i;
+        }
+      });
+      
+      const _ml = parseInt(dragObj.style.marginTop);
+      //const _n = Math.floor(listDom.clientWidth /(dragObj.clientWidth + 2*_ml));
+      const itemHeight = dragObj.clientHeight;
+      //const itemWidth = dragObj.clientWidth;
+      let topIndex = selectIndex;
+
+      //添加显示框
+      dragObj.after(holdItemDom);
+      dragObj.classList.add(active);
+      dragObj.style.top =dragObj.offsetTop + 'px';
+      //dragObj.style.left = (dragObj.clientWidth + 2*_ml) * (selectIndex % _n)  + 'px';
+
+      console.log(dragObj.offsetTop);
+      const startTop = dragObj.style.top;
+      //const startLeft = dragObj.style.left;
+      //移动
+      document.onmousemove = function (event) {
+        dragObj.classList.add(active);
+
+        const moveY = event.clientY;
+       // const moveX = event.clientX;
+
+        const presentTop = (isNaN(parseInt(startTop)) ? 0 : parseInt(startTop))+ (moveY - startY);
+        //const presentLeft = (isNaN(parseInt(startLeft))? 0 : parseInt(startLeft)) + (moveX - startX);
+
+        dragObj.style.top = presentTop + 'px';
+       // dragObj.style.left = presentLeft + 'px';
+       // dragObj.style.marginLeft = 10 + 'px';
+        //移动之后的index
+      //   currenIndex = _n*Math.ceil((parseInt(presentTop) - itemHeight / 2 - _ml) / (itemHeight + _ml))+
+      // Math.ceil((parseInt(presentLeft) - itemWidth/ 2 - _ml) / (itemWidth + _ml));
+
+        if (currenIndex < 0) currenIndex = 0;
+        if (currenIndex > listLength - 1) currenIndex = listLength - 1;
+        if (topIndex !== currenIndex) {
+          holdItemDom.remove();
+          if (currenIndex < topIndex) {
+            dragObj.remove();
+            itemDomList[currenIndex].before(dragObj);
+            dragObj.after(holdItemDom);
+          } else {
+            currentItems[currenIndex].after(holdItemDom);
+          }
+        }
+      };
+      //放置
+      document.onmouseup = function (event) {
+
+        if (currenIndex > topIndex) {
+          currentItems[currenIndex].after(dragObj);
+        }
+        holdItemDom.remove();
+        dragObj.classList.remove(active);
+        dragObj.classList.remove('select');
+        document.onmousemove = null;
+        document.onmouseup = null;
+      }
+    };
+    }
+
+    function dragMethod(from, to,_$,__$) { 
+      let cloneObj = null;
+      let num = 0;
+      const holdItemDom = document.createElement('div');
+      holdItemDom.classList.add("item","hold")
+      //拖拽
+    _$(from).ondragstart = (event) => {
+      cloneObj = event.target.cloneNode(true);
+    }
+    _$(to).ondragover = (event) => {
+      event.preventDefault();
+      if(_$(to).childNodes.length && _$(to).childNodes[0].nodeType == 3){
+        _$(to).childNodes[0].remove();
+      }
+        _$(to).appendChild(holdItemDom);
+      
+    }
+    _$(to).ondragleave = (event) => {
+      if(event.fromElement && event.fromElement.className.indexOf("hold") === -1){
+        holdItemDom.remove();
+      }else{
+        return;
+      }
+    }
+    _$(to).ondragenter= (event) => {
+      if(event){
+       // holdItemDom.remove();
+      }
+    }
+    _$(to).ondrop = (event) => {
+      num++;
+      event.preventDefault();
+      holdItemDom.remove();
+      event.currentTarget.appendChild(cloneObj);
+      Array.from(event.currentTarget.children).forEach( (v, i) => {
+        v.draggable = false;
+        (function(){
+          v.id = i + 2;
+          v.style = 'margin-top:'+window.getComputedStyle(v).marginTop;
+        })(i)
+      })
+    }
+     }
+    function a(){
+      const _$ = selectors => document.querySelector(selectors);
+      const __$ = selectors => document.querySelectorAll(selectors);
+      init('.items', 'item', '.del', 'select',_$,__$);
+      dragMethod('.mod', '.items',_$);
+    }
+    a();
+  </script>
+</body>
+
+</html>

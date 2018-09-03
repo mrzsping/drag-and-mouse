@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>拖拽添加排序</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      display: flex;
+      font-size: 15px;
+      width: 300px;
+    }
+    .mod div{
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      background: #f00;
+    }
+    .items {
+      width: 156px;
+      height: auto;
+      min-height: 200px;
+      margin: 0;
+      position: relative;
+      background-color: #f6f9fa;
+      overflow: hidden;
+      border-radius: 4px;
+      border: 1px solid #f00;
+    }
+
+    .item {
+      float: left;
+      margin: 10px;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      transition: background-color .3s, color .3s, box-shadow .5s;
+      cursor: pointer;
+      user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .item:hover {
+      background-color: #00a1d6;
+      color: #fff;
+    }
+
+    .select {
+      position: absolute;
+      background-color: #00a1d6;
+      color: #fff;
+      box-shadow: 0 4px 4px #ccc;
+      z-index: 999;
+    }
+
+    .hold {
+      cursor: inherit;
+      border: 1px dashed #ccc;
+      box-sizing: border-box;
+      animation: hold-higther 200ms ease-in;
+    }
+
+    @keyframes hold-higther {
+      0% {
+        transform: scale(.4);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="items">
+      
+    </div>
+  </div>
+  <div class="mod">
+    <div draggable="true" class="item">1
+      <span class="del">X</span>
+    </div>
+    <div draggable="true" class="item">2
+        <span class="del">X</span>
+    </div>
+    <div draggable="true" class="item">3
+        <span class="del">X</span>
+    </div>
+    <div draggable="true" class="item">4
+        <span class="del">X</span>
+    </div>
+    <div draggable="true" class="item">5
+        <span class="del">X</span>
+    </div>
+  </div>
+  <script>
+    //定义元素获取
+    const _ = selectors => document.querySelector(selectors);
+    const __ = selectors => document.querySelectorAll(selectors);
+    //克隆元素
+    let cloneObj = null;
+    let num = 0;
+    //拖拽
+      document.querySelector(".mod").ondragstart = function(event){
+        cloneObj = event.target.cloneNode(true);
+      }
+      document.querySelector('.items').ondragover = function(event){
+        event.preventDefault();
+      }
+      document.querySelector('.items').ondrop = function(event){
+        num++;
+        event.preventDefault();
+        event.currentTarget.appendChild(cloneObj);
+        Array.from(event.currentTarget.children).forEach( (v, i) => {
+          v.draggable = false;
+          (function(){
+            v.id = i + 1;
+          })(i)
+        })
+      }
+    //移动显示
+    const holdItemDom = document.createElement('div');
+    const listDom = _(".items");
+    const itemDomList = __('.items .item');
+    const listLength = listDom.children.length;
+    let dragObj;
+    
+    holdItemDom.classList.add('item', 'hold');
+    //mousedown
+    listDom.onmousedown = (event) => {
+      if(listDom.firstChild.nodeType == 3){
+        listDom.removeChild(listDom.firstChild);
+      }
+      let currenIndex;
+      const startY = event.clientY;
+      const startX = event.clientX;
+
+      //获取index
+      let selectIndex;
+      dragObj = event.target;
+      Array.from(itemDomList).forEach((v, i) => {
+        if (v === event.target) {
+          selectIndex = i;
+        }
+      });
+      //添加显示框
+      dragObj.after(holdItemDom);
+      dragObj.classList.add('select');
+      dragObj.style.top = (dragObj.clientHeight + 20) * Math.floor(selectIndex / 3) + 'px';
+      dragObj.style.left = (dragObj.clientWidth +20) * (selectIndex % 3)  + 'px';
+
+      const itemHeight = dragObj.clientHeight;
+      const itemWidth = dragObj.clientWidth;
+
+      let topIndex = selectIndex;
+
+      const startTop = dragObj.style.top;
+      const startLeft = dragObj.style.left;
+      //
+      // previousIndex = 3*Math.floor((parseInt(startTop)) / (itemHeight + 10))+
+      // Math.floor((parseInt(startLeft)) / (itemWidth + 10));
+      //移动
+      document.onmousemove = function (event) {
+        dragObj.classList.add('select');
+
+        const moveY = event.clientY;
+        const moveX = event.clientX;
+
+        const presentTop = parseInt(startTop) + (moveY - startY);
+        const presentLeft = parseInt(startLeft) + (moveX - startX);
+
+        dragObj.style.top = presentTop + 'px';
+        dragObj.style.left = presentLeft + 'px';
+        //移动之后的index
+        currenIndex = 3*Math.ceil((parseInt(presentTop) - itemHeight / 2 - 10) / (itemHeight+10))+
+      Math.ceil((parseInt(presentLeft) - itemWidth/ 2 - 10) / (itemWidth+10));
+
+        if (currenIndex < 0) currenIndex = 0;
+        if (currenIndex > listLength - 1) currenIndex = listLength - 1;
+        if (topIndex !== currenIndex) {
+          holdItemDom.remove();
+          if (currenIndex < topIndex) {
+            dragObj.remove();
+            itemDomList[currenIndex].before(dragObj);
+            dragObj.after(holdItemDom);
+          } else {
+            const currentItems = __('.box .item');
+            currentItems[currenIndex].after(holdItemDom);
+          }
+        }
+      };
+      //放置
+      document.onmouseup = function (event) {
+        const currentItems = __('.box .item');
+
+        if (currenIndex > topIndex) {
+          currentItems[currenIndex].after(dragObj);
+        }
+        holdItemDom.remove();
+        dragObj.classList.remove('select');
+        dragObj.removeAttribute('style');
+        document.onmousemove = null;
+        document.onmouseup = null;
+      }
+    };
+
+    //删除
+
+    const delBtn = __('.del');
+    Array.from(delBtn).forEach((v, i) => {
+      v.onclick = () => {
+        console.log(v, i)
+      }
+    })
+    
+    
+  </script>
+</body>
+
+</html>

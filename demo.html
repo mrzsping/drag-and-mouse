@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+    <script>
+        var c = [];
+        function a(){
+            var b = [1,2,3,4,5];
+
+            for(var i = 0; i<b.length;i++){
+                var x = {};
+                x.pr = function(){
+                    console.log(i)
+                }
+                c.push(x);
+            }
+        }
+a();
+        c[0].pr();
+        c[1].pr()
+    </script>
+    </body>
+</html>     

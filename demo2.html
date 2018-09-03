@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    #a,#b,#c,#s>div{
+      width: 40px;
+      height: 40px;
+      float: left;
+      margin: 10px;
+      background: #f00
+    }
+    #s{
+      width: 200px;
+      height: 200px;
+      border: 1px solid #000;
+      position: relative;
+    }
+    .s{
+      width: 200px;
+    height: 40px;
+    overflow: hidden;
+    clear: both;
+    }
+    span{display: none}
+    #del{
+      display: none
+    }
+  </style>
+</head>
+<body>
+  <!-- 模块容器 -->
+  <div class="s"  ondragover="dr2(event)">
+      <div id="a" draggable="true" ondragstart="dr(event)" onmousedown="mo(event)">
+        <span onclick="del(event)">X</span>1
+      </div>
+      <div id="b" draggable="true" ondragstart="dr(event)">
+        <span onclick="del(event)">X</span>2
+      </div>
+      <div id="c" draggable="true" ondragstart="dr(event)">
+        <span onclick="del(event)">X</span>3
+      </div>
+  </div>
+<!-- 页面容器 -->
+  <div id="s" ondragover="dr2(event)" ondrop="dr3(event)" class="m"></div>
+
+
+  <script>
+    let move_ = null;
+    let con_1 = null;
+    let con_2 = null;
+    let num = 0;
+    //，开始拖拽
+    function dr(e){
+      //起始容器元素类名
+      con_1 = e.currentTarget.parentNode.className;
+      //被拖拽节点克隆，保证原节点不变
+      move_ = e.currentTarget.cloneNode(true);
+    }
+    //拖拽进入目标元素可进入
+    function dr2(e){
+        e.preventDefault();
+    }
+    //进入目标元素后被拖拽元素可放置
+    function dr3(e){
+      num++;
+      //目标元素类名
+      con_2 = e.currentTarget.className;
+      e.preventDefault();
+      //是否为同一容器内拖拽
+       if(con_1 !== con_2){
+        e.currentTarget.appendChild(move_);
+        //关闭按钮增加id
+        move_.children[0].setAttribute('id','del');
+        //设置每个元素新的id
+        move_.setAttribute('id','move_'+num);
+       }else{
+         console.log(e.target.offsetLeft)
+       }
+    }
+    //删除
+    function del(e){
+      document.querySelector('#s').removeChild(document.querySelector('#'+e.target.parentNode.id));
+    }
+    //页面容器移动
+    var bol = false;
+    function mo(e) {
+      bol = true;
+      console.log(e.target);
+      var el = e;
+        document.onmousemove = function(ev){
+        if(bol){
+          console.log(ev.clientX)
+        }
+        
+        }
+        document.onmouseup = function(en){
+          en.onmousemove = null;
+          en.onmouseup = null;
+          bol = false;
+        }
+     }
+  </script>
+</body>
+</html>

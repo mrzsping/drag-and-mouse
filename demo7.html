@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<style>
+  .a{
+    float: left;
+    padding: 20px;
+    margin-left: 20px;
+    width: 200px;
+    height: auto;
+    border: 1px solid #ca9090;
+  }
+  .b,.f{
+    width: 200px;
+    height: 20px;
+    background: #f00;
+  }
+  .c{
+    width: 200px;
+    height: 60px;
+    background: #00f;
+  }
+  .g{
+    width: 200px;
+    height: 78px;
+    background: #0f0;
+  }
+  .right{
+    float: left;
+    margin-left: 20px;
+  }
+  body{
+    padding: 0;
+    margin: 0;
+  }
+  .e{
+    width: 600px;
+  height: 400px;
+    position: relative;
+    margin: 30px;
+  }
+  .a .item{
+    width: 100%;
+    height: 60px;
+    position: static;
+    top: 0;
+    left: 0;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+  }
+  .item{
+    user-select: none;
+  }
+</style>
+<body>
+  <div class="e">
+      <div class="a">
+          <!-- <div class="item f">1</div> -->
+        </div>
+        <div class="right">
+            <div class="item b">1</div>
+            <div class="item c">2</div>
+            <div class="item g">3</div>
+          </div>
+  </div>
+  
+  <script>
+    function fn(){
+    Array.from(document.querySelectorAll('.item')).forEach(i => {
+      i.onmousedown = function(e){
+       const d = document.createElement('div');//弹出盒子
+       const h = e.currentTarget.clientHeight;//盒子高
+       const w = e.currentTarget.clientWidth;//盒子宽
+       const a = document.querySelector(".a");//左边
+       const la = document.querySelectorAll('.a .item');
+       let arr =[];
+       let bol;
+       let f;
+       d.style.width = '200px';
+       d.style.height = e.currentTarget.clientHeight+ 'px';
+       d.style.position = 'absolute';
+       d.style.top = e.clientY- h/2 +'px';
+       d.style.left =  e.clientX - w/2 +'px';
+       d.style.border = "1px solid #f00";
+       d.innerHTML = i.innerHTML;
+       
+       if(i.parentNode.className == 'right'){
+            f = d.cloneNode(true);
+            bol = false;
+         }else{
+           f = d;
+           i.remove();
+           bol = true;
+         }
+       document.body.appendChild(d);
+       document.onmousemove = function(e){
+        d.style.top = e.clientY- h/2 +'px';
+        d.style.left =  e.clientX - w/2 +'px';
+       //进入左边盒子
+        if(e.clientX <= a.offsetLeft + a.clientWidth + w/2 + 30 && e.clientX + w/2 >= a.offsetLeft + w/2 && e.clientY <= a.offsetTop + 30 + a.clientHeight + h/2 && e.clientY + h/2 >= a.offsetTop + 30 ){
+          bol = true;
+          if(la.length >0){
+            Array.from(la).forEach(i => {
+              i.style.borderColor = "#f00";
+            })
+            arr = Array.from(la).filter((i, u) => {
+              // console.log(arr.length);
+            return i.offsetTop + 30 + i.clientHeight/2 >= e.clientY && i.offsetTop + 30 - i.clientHeight/2 <= e.clientY; 
+            });
+            if(arr.length > 0){
+              arr[0].style.borderTopColor = "#00f";
+              console.log(arr.length)
+            }else if(arr.length == 0 && bol){
+             la[la.length-1].style.borderBottomColor = "#00f";
+            //  la[la.length-1].innerHTML = '1231'
+              console.log(la.length-1)
+            }
+          }else{
+          }
+        }else{
+          if(la.length > 0){
+            Array.from(la).forEach(i => {
+              i.style.borderColor = "#f00";
+            })
+          }
+        }
+       }
+       document.onmouseup = function(e){
+          f.style.position = 'static';
+          f.style.top =  0;
+          f.style.left = 0;
+          f.classList.add('item');
+         if(a.children.length == 0 && bol && e.clientX <= a.offsetLeft + a.clientWidth + w/2 + 30 && e.clientX + w/2 >= a.offsetLeft + w/2 && e.clientY <= a.offsetTop + 30 + a.clientHeight + h/2 && e.clientY + h/2 >= a.offsetTop + 30 ){
+            a.appendChild(f);
+         }else if(bol && a.children.length !== 0){
+           a.insertBefore(f,arr[0]);
+           Array.from(la).forEach(i => {
+              i.style.borderColor = "#f00";
+            })
+         }
+          if(i.parentNode && i.parentNode.className == 'right'){
+            d.remove()
+          }
+          document.onmousemove = null;
+          document.onmouseup = null;
+          console.log(1111);
+          fn();
+        }
+      }
+    });
+    }
+    fn()
+  </script>
+</body>
+</html>
