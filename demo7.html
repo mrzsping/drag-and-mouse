@@ -70,62 +70,59 @@
   </div>
   
   <script>
-    function fn(){
-    Array.from(document.querySelectorAll('.item')).forEach(i => {
+    function MoveAdd(toBoxClass, list, mt, showWidth, color,  changeColor) {
+    Array.from(document.querySelectorAll(`.${list}`)).forEach(i => {
       i.onmousedown = function(e){
-       const d = document.createElement('div');//弹出盒子
-       const h = e.currentTarget.clientHeight;//盒子高
-       const w = e.currentTarget.clientWidth;//盒子宽
-       const a = document.querySelector(".a");//左边
-       const la = document.querySelectorAll('.a .item');
+       const moveBox = document.createElement('div');// 弹出盒子
+       const h = e.currentTarget.clientHeight;// 盒子高
+       const w = e.currentTarget.clientWidth;// 盒子宽
+       const toBox = document.querySelector(toBoxClass);// 左边
+       const toList = document.querySelectorAll(`${toBoxClass} .${list}`);
        let arr =[];
        let bol;
        let f;
-       d.style.width = '200px';
-       d.style.height = e.currentTarget.clientHeight+ 'px';
-       d.style.position = 'absolute';
-       d.style.top = e.clientY- h/2 +'px';
-       d.style.left =  e.clientX - w/2 +'px';
-       d.style.border = "1px solid #f00";
-       d.innerHTML = i.innerHTML;
+       moveBox.style.width = showWidth;
+       moveBox.style.height = e.currentTarget.clientHeight+ 'px';
+       moveBox.style.position = 'absolute';
+       moveBox.style.top = e.clientY- h/2 +'px';
+       moveBox.style.left =  e.clientX - w/2 +'px';
+       moveBox.style.border = `1px solid ${color}`;
+       moveBox.innerHTML = i.innerHTML;
        
-       if(i.parentNode.className == 'right'){
-            f = d.cloneNode(true);
+       if(i.parentNode.className === 'right'){
+            f = moveBox.cloneNode(true);
             bol = false;
          }else{
-           f = d;
+           f = moveBox;
            i.remove();
            bol = true;
          }
-       document.body.appendChild(d);
+       document.body.appendChild(moveBox);
        document.onmousemove = function(e){
-        d.style.top = e.clientY- h/2 +'px';
-        d.style.left =  e.clientX - w/2 +'px';
+        moveBox.style.top = e.clientY- h/2 +'px';
+        moveBox.style.left =  e.clientX - w/2 +'px';
        //进入左边盒子
-        if(e.clientX <= a.offsetLeft + a.clientWidth + w/2 + 30 && e.clientX + w/2 >= a.offsetLeft + w/2 && e.clientY <= a.offsetTop + 30 + a.clientHeight + h/2 && e.clientY + h/2 >= a.offsetTop + 30 ){
+        if(e.clientX <= toBox.offsetLeft + toBox.clientWidth + w/2 + 30 && e.clientX + w/2 >= toBox.offsetLeft + w/2 && e.clientY <= toBox.offsetTop + 30 + toBox.clientHeight + h/2 && e.clientY + h/2 >= toBox.offsetTop + 30 ){
           bol = true;
-          if(la.length >0){
-            Array.from(la).forEach(i => {
-              i.style.borderColor = "#f00";
+          if(toList.length >0){
+            Array.from(toList).forEach(i => {
+              i.style.borderColor = color;
             })
-            arr = Array.from(la).filter((i, u) => {
+            arr = Array.from(toList).filter((i, u) => {
               // console.log(arr.length);
             return i.offsetTop + 30 + i.clientHeight/2 >= e.clientY && i.offsetTop + 30 - i.clientHeight/2 <= e.clientY; 
             });
             if(arr.length > 0){
-              arr[0].style.borderTopColor = "#00f";
-              console.log(arr.length)
+              arr[0].style.borderTopColor = changeColor;
             }else if(arr.length == 0 && bol){
-             la[la.length-1].style.borderBottomColor = "#00f";
-            //  la[la.length-1].innerHTML = '1231'
-              console.log(la.length-1)
+              toList[toList.length-1].style.borderBottomColor = changeColor;
             }
           }else{
           }
         }else{
-          if(la.length > 0){
-            Array.from(la).forEach(i => {
-              i.style.borderColor = "#f00";
+          if(toList.length > 0){
+            Array.from(toList).forEach(i => {
+              i.style.borderColor = color;
             })
           }
         }
@@ -134,27 +131,26 @@
           f.style.position = 'static';
           f.style.top =  0;
           f.style.left = 0;
-          f.classList.add('item');
-         if(a.children.length == 0 && bol && e.clientX <= a.offsetLeft + a.clientWidth + w/2 + 30 && e.clientX + w/2 >= a.offsetLeft + w/2 && e.clientY <= a.offsetTop + 30 + a.clientHeight + h/2 && e.clientY + h/2 >= a.offsetTop + 30 ){
-            a.appendChild(f);
-         }else if(bol && a.children.length !== 0){
-           a.insertBefore(f,arr[0]);
-           Array.from(la).forEach(i => {
-              i.style.borderColor = "#f00";
+          f.classList.add(list);
+         if(toBox.children.length == 0 && bol && e.clientX <= toBox.offsetLeft + toBox.clientWidth + w/2 + 30 && e.clientX + w/2 >= toBox.offsetLeft + w/2 && e.clientY <= toBox.offsetTop + 30 + toBox.clientHeight + h/2 && e.clientY + h/2 >= toBox.offsetTop + 30 ){
+          toBox.appendChild(f);
+         }else if(bol && toBox.children.length !== 0){
+          toBox.insertBefore(f,arr[0]);
+           Array.from(toList).forEach(i => {
+              i.style.borderColor = color;
             })
          }
           if(i.parentNode && i.parentNode.className == 'right'){
-            d.remove()
+            moveBox.remove()
           }
           document.onmousemove = null;
           document.onmouseup = null;
-          console.log(1111);
-          fn();
+          MoveAdd(toBoxClass, list, mt, showWidth, color,  changeColor);
         }
       }
     });
     }
-    fn()
+    MoveAdd('.a', 'item', 30, '200px', '#f00', '#00F');
   </script>
 </body>
 </html>
