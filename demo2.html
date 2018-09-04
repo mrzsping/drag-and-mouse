@@ -5,104 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <style>
-    #a,#b,#c,#s>div{
-      width: 40px;
-      height: 40px;
-      float: left;
-      margin: 10px;
-      background: #f00
+ 
+  <style> 
+        img{      
+        transition:all .25s ease-in-out;
+        display: inline-block;
+        }
+        .goods-item:hover{
+        cursor: move;
+        }
+        .goods_c6{
+        margin: 35px 0 10px 0;
+        font-size: 14px;
+        color: #666;
+        width: 100%;
+        }
+        .goods_c6:hover{
+            color: #f00;
+            cursor: pointer;
+        }
+        .goods_title{
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+            display: inline-block;
+        width: 140px;
+        }
+    .th{
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
-    #s{
-      width: 200px;
-      height: 200px;
-      border: 1px solid #000;
-      position: relative;
+    .bigger:hover img{
+        transform: scale(1.1)
     }
-    .s{
-      width: 200px;
-    height: 40px;
-    overflow: hidden;
-    clear: both;
+    .del{
+        display: none;
+        position: absolute;
+        background: rgba(0,0,0,0.1);
+        right: 0;
+        left: 0;
+        bottom: 10px;
+        height: 40px;
+        color: #f00;
+        line-height: 40px;
+        opacity: 0;
+        transition: all 0.4s;
     }
-    span{display: none}
-    #del{
-      display: none
+    .page .del{display: block;}
+    .goods-item:hover .del{
+        opacity: 1;
+        cursor: pointer;
     }
-  </style>
+     .del:hover{
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
-  <!-- 模块容器 -->
-  <div class="s"  ondragover="dr2(event)">
-      <div id="a" draggable="true" ondragstart="dr(event)" onmousedown="mo(event)">
-        <span onclick="del(event)">X</span>1
-      </div>
-      <div id="b" draggable="true" ondragstart="dr(event)">
-        <span onclick="del(event)">X</span>2
-      </div>
-      <div id="c" draggable="true" ondragstart="dr(event)">
-        <span onclick="del(event)">X</span>3
-      </div>
-  </div>
-<!-- 页面容器 -->
-  <div id="s" ondragover="dr2(event)" ondrop="dr3(event)" class="m"></div>
+<div class="goods-item bigger">
+    <img src="./plugins/descTemplate/images/spjd_one_img/5.jpg" alt="err" width="180px" height="160px">
+    <!-- <p class="goods_c6"  title="仨人翁任务热无若仨人翁任务热无若无若无仨人翁任务热无若无若无仨人翁任务热无若无若无无若无">仨人翁任务热无若仨人翁任务热无若无若无仨人翁任务热无若无若无仨人翁任务热无若无若无无若无</p>
+    <span class="goods_title" title="心柔 中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼">心柔 中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼中秋月饼</span>  -->
+    <div class="del">删除</div>
+</div>
 
 
   <script>
-    let move_ = null;
-    let con_1 = null;
-    let con_2 = null;
-    let num = 0;
-    //，开始拖拽
-    function dr(e){
-      //起始容器元素类名
-      con_1 = e.currentTarget.parentNode.className;
-      //被拖拽节点克隆，保证原节点不变
-      move_ = e.currentTarget.cloneNode(true);
-    }
-    //拖拽进入目标元素可进入
-    function dr2(e){
-        e.preventDefault();
-    }
-    //进入目标元素后被拖拽元素可放置
-    function dr3(e){
-      num++;
-      //目标元素类名
-      con_2 = e.currentTarget.className;
-      e.preventDefault();
-      //是否为同一容器内拖拽
-       if(con_1 !== con_2){
-        e.currentTarget.appendChild(move_);
-        //关闭按钮增加id
-        move_.children[0].setAttribute('id','del');
-        //设置每个元素新的id
-        move_.setAttribute('id','move_'+num);
-       }else{
-         console.log(e.target.offsetLeft)
-       }
-    }
-    //删除
-    function del(e){
-      document.querySelector('#s').removeChild(document.querySelector('#'+e.target.parentNode.id));
-    }
-    //页面容器移动
-    var bol = false;
-    function mo(e) {
-      bol = true;
-      console.log(e.target);
-      var el = e;
-        document.onmousemove = function(ev){
-        if(bol){
-          console.log(ev.clientX)
-        }
-        
-        }
-        document.onmouseup = function(en){
-          en.onmousemove = null;
-          en.onmouseup = null;
-          bol = false;
-        }
-     }
+   
   </script>
 </body>
 </html>

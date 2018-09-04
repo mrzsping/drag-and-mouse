@@ -63,94 +63,110 @@
           <!-- <div class="item f">1</div> -->
         </div>
         <div class="right">
-            <div class="item b">1</div>
+            <div class="item b"><span>123</span></div>
             <div class="item c">2</div>
             <div class="item g">3</div>
           </div>
   </div>
   
   <script>
-    function MoveAdd(toBoxClass, list, mt, showWidth, color,  changeColor) {
-    Array.from(document.querySelectorAll(`.${list}`)).forEach(i => {
-      i.onmousedown = function(e){
-       const moveBox = document.createElement('div');// 弹出盒子
-       const h = e.currentTarget.clientHeight;// 盒子高
-       const w = e.currentTarget.clientWidth;// 盒子宽
-       const toBox = document.querySelector(toBoxClass);// 左边
-       const toList = document.querySelectorAll(`${toBoxClass} .${list}`);
-       let arr =[];
-       let bol;
-       let f;
-       moveBox.style.width = showWidth;
-       moveBox.style.height = e.currentTarget.clientHeight+ 'px';
-       moveBox.style.position = 'absolute';
-       moveBox.style.top = e.clientY- h/2 +'px';
-       moveBox.style.left =  e.clientX - w/2 +'px';
-       moveBox.style.border = `1px solid ${color}`;
-       moveBox.innerHTML = i.innerHTML;
-       
-       if(i.parentNode.className === 'right'){
+    function MoveAdd(toBoxClass, list, mt, ml, showWidth, color, changeColor) {
+      const obj = document.getElementsByClassName(`${list}`);
+      /* eslint-disable */
+      for (let i = 0; i < obj.length; i++) {
+        obj[i].onmousedown = (e) => {
+          if(e.button !== 0){
+            return
+          }
+          const moveBox = document.createElement('div');// 弹出盒子
+          const h = e.currentTarget.clientHeight;// 盒子高
+          const w = e.currentTarget.clientWidth;// 盒子宽
+          window.console.log(h, w);
+          const toBox = document.querySelector(toBoxClass);// 左边
+          const toList = document.querySelectorAll(`${toBoxClass} .${list}`);
+          let arr = [];
+          let bol;
+          let f;
+          moveBox.style.width = `${obj[i].clientWidth}px`;
+          moveBox.style.height = `${e.currentTarget.clientHeight}px`;
+          moveBox.style.position = 'absolute';
+          moveBox.style.top = `${e.clientY - h / 2}px`;
+          moveBox.style.left = `${e.clientX - w / 2}px`;
+          moveBox.style.border = `1px solid ${color}`;
+          moveBox.innerHTML = obj[i].innerHTML;
+          if (obj[i].parentNode.className === 'right') {
             f = moveBox.cloneNode(true);
             bol = false;
-         }else{
-           f = moveBox;
-           i.remove();
-           bol = true;
-         }
-       document.body.appendChild(moveBox);
-       document.onmousemove = function(e){
-        moveBox.style.top = e.clientY- h/2 +'px';
-        moveBox.style.left =  e.clientX - w/2 +'px';
-       //进入左边盒子
-        if(e.clientX <= toBox.offsetLeft + toBox.clientWidth + w/2 + 30 && e.clientX + w/2 >= toBox.offsetLeft + w/2 && e.clientY <= toBox.offsetTop + 30 + toBox.clientHeight + h/2 && e.clientY + h/2 >= toBox.offsetTop + 30 ){
-          bol = true;
-          if(toList.length >0){
-            Array.from(toList).forEach(i => {
-              i.style.borderColor = color;
-            })
-            arr = Array.from(toList).filter((i, u) => {
-              // console.log(arr.length);
-            return i.offsetTop + 30 + i.clientHeight/2 >= e.clientY && i.offsetTop + 30 - i.clientHeight/2 <= e.clientY; 
-            });
-            if(arr.length > 0){
-              arr[0].style.borderTopColor = changeColor;
-            }else if(arr.length == 0 && bol){
-              toList[toList.length-1].style.borderBottomColor = changeColor;
+          } else {
+            f = moveBox;
+            obj[i].remove();
+            bol = true;
+          }
+          document.body.appendChild(moveBox);
+          document.onmousemove = (event) => {
+            if(e.button !== 0){
+              return
             }
-          }else{
-          }
-        }else{
-          if(toList.length > 0){
-            Array.from(toList).forEach(i => {
-              i.style.borderColor = color;
-            })
-          }
-        }
-       }
-       document.onmouseup = function(e){
-          f.style.position = 'static';
-          f.style.top =  0;
-          f.style.left = 0;
-          f.classList.add(list);
-         if(toBox.children.length == 0 && bol && e.clientX <= toBox.offsetLeft + toBox.clientWidth + w/2 + 30 && e.clientX + w/2 >= toBox.offsetLeft + w/2 && e.clientY <= toBox.offsetTop + 30 + toBox.clientHeight + h/2 && e.clientY + h/2 >= toBox.offsetTop + 30 ){
-          toBox.appendChild(f);
-         }else if(bol && toBox.children.length !== 0){
-          toBox.insertBefore(f,arr[0]);
-           Array.from(toList).forEach(i => {
-              i.style.borderColor = color;
-            })
-         }
-          if(i.parentNode && i.parentNode.className == 'right'){
-            moveBox.remove()
-          }
-          document.onmousemove = null;
-          document.onmouseup = null;
-          MoveAdd(toBoxClass, list, mt, showWidth, color,  changeColor);
-        }
+            moveBox.style.top = `${event.clientY - h / 2}px`;
+            moveBox.style.left = `${event.clientX - w / 2}px`;
+          // 进入左边盒子
+            if (event.clientX <= toBox.offsetLeft + toBox.clientWidth + w / 2 + ml &&
+            event.clientX + w / 2 >= toBox.offsetLeft + w / 2 &&
+            event.clientY <= toBox.offsetTop + mt + toBox.clientHeight + h / 2 &&
+            event.clientY + h / 2 >= toBox.offsetTop + mt) {
+              bol = true;
+              if (toList.length > 0) {
+                Array.from(toList).forEach((m) => {
+                  m.style.borderColor = color;
+                });
+                arr = Array.from(toList).filter(iList =>
+                  iList.offsetTop + mt + iList.clientHeight / 2 >= event.clientY &&
+                  iList.offsetTop + mt - iList.clientHeight / 2 <= event.clientY,
+                );
+                if (arr.length > 0) {
+                  arr[0].style.borderTopColor = changeColor;
+                } else if (arr.length === 0 && bol) {
+                  toList[toList.length - 1].style.borderBottomColor = changeColor;
+                }
+              }
+            } else if (toList.length > 0) {
+              Array.from(toList).forEach((n) => {
+                n.style.borderColor = color;
+              });
+            }
+          };
+          document.onmouseup = (event) => {
+            if(e.button !== 0){
+              return
+            }
+            f.style.position = 'static';
+            f.style.top = 0;
+            f.style.left = 0;
+            f.classList.add(list);
+            if (toBox.children.length === 0 && bol &&
+            event.clientX <= toBox.offsetLeft + toBox.clientWidth + w / 2 + 30 &&
+            event.clientX + w / 2 >= toBox.offsetLeft + w / 2 &&
+            event.clientY <= toBox.offsetTop + mt + toBox.clientHeight + h / 2 &&
+            event.clientY + h / 2 >= toBox.offsetTop + mt) {
+              toBox.appendChild(f);
+            } else if (bol && toBox.children.length !== 0) {
+              toBox.insertBefore(f, arr[0]);
+              Array.from(toList).forEach((u) => {
+                u.style.borderColor = color;
+              });
+            }
+            window.console.log(obj[i].parentNode.className);
+            if (e.target.parentNode && e.target.parentNode.className === 'right') {
+              moveBox.remove();
+            }
+            document.onmousemove = null;
+            document.onmouseup = null;
+            this.MoveAdd(toBoxClass, list, mt, ml, showWidth, color, changeColor);
+          };
+        };
       }
-    });
     }
-    MoveAdd('.a', 'item', 30, '200px', '#f00', '#00F');
+    MoveAdd('.a', 'item', 30, 30,'200px', '#f00', '#00F');
   </script>
 </body>
 </html>
