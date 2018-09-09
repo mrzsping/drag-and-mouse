@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .box{
+      width: 120px;
+      height: 20px;
+      position: relative;
+    }
+    .over{
+      position: absolute;
+      width: 120px;
+      height: 20px;
+      border: 1px solid #0f0;
+      box-sizing: border-box;
+    }
+    input{
+      position: absolute;
+      opacity: 0;
+      z-index: 2;
+      width: 100%;
+    margin: 0;
+    height: 100%;
+    }
+    input:checked+span{
+      border: 1px solid #f00;
+      background: #f00
+    }
+    /* input:checked+span:after{
+      left: 4px;
+      width: 8px;
+      top: 0px;
+      height: 15px;
+      content: '';
+      border-right: 2px solid #00f;
+      border-bottom: 2px solid #00f;
+      transform: rotate(45deg);
+      position: absolute;
+    } */
+  </style>
+</head>
+<body>
+  <div class="box">
+    <input type="checkbox">
+    <span class="over"></span>
+  </div>
+</body>
+</html>

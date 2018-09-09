@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function Show(type){
+      this.type = type || 'calc';
+      this.cale = function () { 
+        return '111111'+this.type
+       }
+    }
+    var a = new  Show('12');
+    // new 创建临时空对象，替换函数内部this
+    var obj = {};
+    Show.apply(obj, ['132']);
+    console.log(obj.cale());
+
+    function Person(name){
+      var address = '132';
+      this.getAddress = function () { 
+        return address
+       }
+       this.name = name
+    }
+
+    Person.prototype.getName = function () { 
+      return this.name
+     }
+     Person.prototype.setName = function(name){
+       this.name = name
+     }
+     Person.char = '113';
+     var obj2 = new Person('jack');
+     console.log(Person.char)
+  </script>
+</body>
+</html>
